@@ -37,11 +37,21 @@ struct custom_hash {
         uint64_t second_hash = splitmix64(p.second + FIXED_RANDOM);
         return first_hash ^ (second_hash << 1);
     }
+    
+    size_t operator()(const string& s) const {
+        static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
+        uint64_t hash = 0;
+        for (char c : s) {
+            hash = hash * 31 + c;  // 31 is a small prime number used in string hashing
+        }
+        return splitmix64(hash + FIXED_RANDOM);
+    }
 };
 
 void solve() {
     gp_hash_table<int, int, custom_hash> M1;
     gp_hash_table<pair<int, int>, int, custom_hash> M2;
+    gp_hash_table<string, int, custom_hash> M3;
 }
 
 int main() {
